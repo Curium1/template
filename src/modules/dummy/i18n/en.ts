@@ -1,0 +1,17 @@
+export const en: Record<string, string> = {
+  'modules.dummy.name': 'Dummy Module',
+  'modules.dummy.nav': 'Dummy',
+  'modules.dummy.list': 'Dummy Items',
+  'modules.dummy.listSubtitle': 'Manage your items.',
+  'modules.dummy.create': 'Create New',
+  'modules.dummy.edit': 'Edit',
+  'modules.dummy.delete': 'Delete',
+  'modules.dummy.admin': 'Administrate',
+  'modules.dummy.title': 'Title',
+  'modules.dummy.description': 'Description',
+  'modules.dummy.status': 'Status',
+  'modules.dummy.noItems': 'No items found.',
+  'modules.dummy.confirmDelete': 'Are you sure you want to delete this item?',
+  'modules.dummy.save': 'Save',
+  'modules.dummy.cancel': 'Cancel',
+};

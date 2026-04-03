@@ -1,0 +1,17 @@
+export const sv: Record<string, string> = {
+  'modules.dummy.name': 'Dummy-modul',
+  'modules.dummy.nav': 'Dummy',
+  'modules.dummy.list': 'Dummy-poster',
+  'modules.dummy.listSubtitle': 'Hantera dina poster.',
+  'modules.dummy.create': 'Skapa ny',
+  'modules.dummy.edit': 'Redigera',
+  'modules.dummy.delete': 'Ta bort',
+  'modules.dummy.admin': 'Administrera',
+  'modules.dummy.title': 'Titel',
+  'modules.dummy.description': 'Beskrivning',
+  'modules.dummy.status': 'Status',
+  'modules.dummy.noItems': 'Inga poster hittades.',
+  'modules.dummy.confirmDelete': 'Är du säker på att du vill ta bort denna post?',
+  'modules.dummy.save': 'Spara',
+  'modules.dummy.cancel': 'Avbryt',
+};
