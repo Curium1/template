@@ -1,0 +1,468 @@
+/*
+ * MyDataGrid — Structural CSS
+ *
+ * Only structural layout that Tailwind can't handle:
+ * sticky headers, virtual scroll containers, resize handles, menus.
+ * All colors use rgb(var(--token)) design tokens.
+ */
+
+/* ─── Shell ─── */
+.mg-grid {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgb(var(--border) / 0.6);
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgb(var(--card));
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+
+/* ─── Scroll Container ───
+   A SINGLE scroll container holds BOTH header and body.
+   Header scrolls horizontally with body but sticks vertically. */
+.mg-scroll-container {
+  overflow: auto;
+  position: relative;
+  flex: 1 1 auto;
+}
+
+.mg-scroll-container--virtual {
+  will-change: transform;
+}
+
+/* ─── Table ─── */
+.mg-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+}
+
+/* ─── Header ─── */
+.mg-thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgb(var(--card));
+}
+
+.mg-th {
+  position: relative;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgb(var(--muted-foreground));
+  padding: 0 12px;
+  white-space: nowrap;
+  user-select: none;
+  border-bottom: 1px solid rgb(var(--border) / 0.5);
+}
+
+.mg-th--sortable {
+  cursor: pointer;
+}
+
+.mg-th--sortable:hover {
+  color: rgb(var(--foreground));
+  background: rgb(var(--foreground) / 0.02);
+}
+
+/* ─── Header Icon Buttons ─── */
+.mg-th-icons {
+  display: flex;
+  align-items: center;
+  gap: 0px;
+  margin-left: auto;
+  opacity: 0.35;
+  transition: opacity 0.15s;
+}
+
+.mg-th:hover .mg-th-icons {
+  opacity: 1;
+}
+
+.mg-th-icon-btn {
+  padding: 2px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s;
+  color: rgb(var(--muted-foreground));
+  border: none;
+  background: none;
+}
+
+.mg-th-icon-btn:hover {
+  background: rgb(var(--foreground) / 0.08);
+  color: rgb(var(--foreground));
+}
+
+.mg-th-icon-btn--active {
+  color: rgb(var(--foreground));
+  opacity: 1;
+}
+
+/* ─── Resize Handle ─── */
+.mg-resize-handle {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  cursor: col-resize;
+  background: transparent;
+  z-index: 1;
+}
+
+.mg-resize-handle:hover,
+.mg-resize-handle--active {
+  background: rgb(var(--foreground) / 0.15);
+}
+
+/* ─── Column Menu / Filter Dropdown ─── */
+.mg-dropdown {
+  position: absolute;
+  z-index: 100;
+  min-width: 200px;
+  max-width: 280px;
+  border-radius: 12px;
+  background: rgb(var(--card));
+  border: 1px solid rgb(var(--border) / 0.6);
+  box-shadow:
+    0 4px 24px rgb(0 0 0 / 0.15),
+    0 1px 4px rgb(0 0 0 / 0.08);
+  overflow: hidden;
+  animation: mg-dropdown-in 0.12s ease-out;
+}
+
+.mg-dropdown--right {
+  right: 0;
+  left: auto;
+}
+
+.mg-dropdown--left {
+  left: 0;
+  right: auto;
+}
+
+@keyframes mg-dropdown-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Menu Items ─── */
+.mg-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgb(var(--foreground));
+  cursor: pointer;
+  border: none;
+  background: none;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.mg-menu-item:hover {
+  background: rgb(var(--foreground) / 0.05);
+}
+
+.mg-menu-item--active {
+  color: rgb(var(--foreground));
+  font-weight: 600;
+}
+
+.mg-menu-item--destructive {
+  color: rgb(var(--destructive, 220 38 38));
+}
+
+.mg-menu-item--destructive:hover {
+  background: rgb(var(--destructive, 220 38 38) / 0.08);
+}
+
+.mg-menu-separator {
+  height: 1px;
+  background: rgb(var(--border) / 0.4);
+  margin: 4px 0;
+}
+
+.mg-menu-label {
+  padding: 6px 14px 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgb(var(--muted-foreground) / 0.5);
+}
+
+/* ─── Filter Popup ─── */
+.mg-filter-popup {
+  min-width: 240px;
+  max-width: 300px;
+}
+
+.mg-filter-search {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 12px;
+  border: none;
+  border-bottom: 1px solid rgb(var(--border) / 0.3);
+  background: transparent;
+  color: rgb(var(--foreground));
+  outline: none;
+}
+
+.mg-filter-search::placeholder {
+  color: rgb(var(--muted-foreground) / 0.4);
+}
+
+.mg-filter-list {
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.mg-filter-list-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 5px 12px;
+  font-size: 12px;
+  color: rgb(var(--foreground));
+  cursor: pointer;
+  border: none;
+  background: none;
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.mg-filter-list-item:hover {
+  background: rgb(var(--foreground) / 0.04);
+}
+
+.mg-filter-list-item--all {
+  font-weight: 600;
+  border-bottom: 1px solid rgb(var(--border) / 0.2);
+  padding-bottom: 7px;
+  margin-bottom: 2px;
+}
+
+.mg-filter-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 8px 12px;
+  border-top: 1px solid rgb(var(--border) / 0.3);
+}
+
+/* ─── Group Drop Zone ─── */
+.mg-group-zone {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 4px 14px;
+  border-bottom: 1px solid rgb(var(--border) / 0.3);
+  background: rgb(var(--card));
+  transition: background 0.15s;
+}
+
+.mg-group-zone--dragover {
+  background: rgb(var(--foreground) / 0.04);
+  outline: 2px dashed rgb(var(--foreground) / 0.15);
+  outline-offset: -2px;
+}
+
+.mg-group-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  background: rgb(var(--foreground) / 0.06);
+  font-size: 11px;
+  font-weight: 600;
+  color: rgb(var(--foreground) / 0.75);
+  cursor: grab;
+}
+
+.mg-group-chip:active {
+  cursor: grabbing;
+}
+
+/* Header drag handle for pivoting */
+.mg-th[draggable="true"] {
+  cursor: grab;
+}
+
+.mg-th[draggable="true"]:active {
+  cursor: grabbing;
+}
+
+.mg-th--dragging {
+  opacity: 0.4;
+}
+
+/* ─── Body Rows ─── */
+.mg-tr {
+  border-bottom: 1px solid rgb(var(--border) / 0.2);
+}
+
+.mg-tr:last-child {
+  border-bottom: none;
+}
+
+.mg-tr:hover {
+  background: rgb(var(--foreground) / 0.015);
+}
+
+.mg-tr--selected {
+  background: rgb(var(--foreground) / 0.04) !important;
+}
+
+.mg-tr--group {
+  background: rgb(var(--secondary) / 0.3);
+}
+
+.mg-tr--group:hover {
+  background: rgb(var(--secondary) / 0.5);
+}
+
+/* ─── Cells ─── */
+.mg-td {
+  padding: 0 12px;
+  font-size: 13px;
+  color: rgb(var(--foreground));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ─── Pinned columns ─── */
+.mg-td--pinned-left,
+.mg-th--pinned-left {
+  background: rgb(var(--card));
+  box-shadow: 2px 0 4px rgb(0 0 0 / 0.08);
+}
+
+.mg-td--pinned-right,
+.mg-th--pinned-right {
+  background: rgb(var(--card));
+  box-shadow: -2px 0 4px rgb(0 0 0 / 0.08);
+}
+
+/* Header pinned cells sit above body pinned cells */
+.mg-th--pinned-left,
+.mg-th--pinned-right {
+  z-index: 4 !important;
+}
+
+/* Row hover: keep pinned cells opaque (must not be semi-transparent!) */
+.mg-tr:hover .mg-td--pinned-left,
+.mg-tr:hover .mg-td--pinned-right {
+  background: color-mix(in srgb, rgb(var(--card)) 96%, rgb(var(--foreground)));
+}
+
+/* Selected row: keep pinned cells opaque */
+.mg-tr--selected .mg-td--pinned-left,
+.mg-tr--selected .mg-td--pinned-right {
+  background: color-mix(in srgb, rgb(var(--card)) 92%, rgb(var(--foreground)));
+}
+
+/* ─── Actions column ─── */
+.mg-td--actions,
+.mg-th--actions {
+  background: rgb(var(--card));
+  box-shadow: -2px 0 4px rgb(0 0 0 / 0.08);
+}
+
+.mg-tr:hover .mg-td--actions {
+  background: color-mix(in srgb, rgb(var(--card)) 96%, rgb(var(--foreground)));
+}
+
+.mg-tr--selected .mg-td--actions {
+  background: color-mix(in srgb, rgb(var(--card)) 92%, rgb(var(--foreground)));
+}
+
+/* ─── Virtual spacer ─── */
+.mg-virtual-spacer {
+  position: relative;
+  width: 100%;
+}
+
+.mg-virtual-row {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: table;
+  table-layout: fixed;
+}
+
+/* ─── Pagination Controls ─── */
+.mg-page-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: 1px solid rgb(var(--border) / 0.3);
+  background: transparent;
+  color: rgb(var(--muted-foreground));
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.mg-page-btn:hover:not(:disabled) {
+  background: rgb(var(--foreground) / 0.06);
+  color: rgb(var(--foreground));
+  border-color: rgb(var(--border) / 0.5);
+}
+
+.mg-page-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.mg-page-size-select {
+  appearance: none;
+  padding: 3px 24px 3px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 6px;
+  border: 1px solid rgb(var(--border) / 0.3);
+  background: transparent;
+  color: rgb(var(--muted-foreground));
+  cursor: pointer;
+  outline: none;
+  transition: all 0.12s;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none' stroke='%237a7a8a' stroke-width='1.5'%3e%3cpath d='M3 4.5L6 7.5L9 4.5'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+}
+
+.mg-page-size-select:hover {
+  border-color: rgb(var(--border) / 0.5);
+  color: rgb(var(--foreground));
+}
+
+.mg-page-size-select:focus {
+  border-color: rgb(var(--ring) / 0.4);
+  box-shadow: 0 0 0 2px rgb(var(--ring) / 0.1);
+}
+
+.mg-page-size-select option {
+  background: rgb(var(--card));
+  color: rgb(var(--foreground));
+}

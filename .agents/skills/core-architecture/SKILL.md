@@ -541,15 +541,46 @@ The app supports **light**, **dark**, and **system** themes via `ThemeProvider` 
 | **Database** | Supabase Postgres with RLS |
 | **Routing** | React Router v7 |
 | **Data fetching** | TanStack React Query (`@tanstack/react-query`) |
-| **Data tables** | AG Grid v35 (`ag-grid-react`, `ag-grid-community`) |
+| **Data tables** | MyDataGrid (TanStack Table v8 internally) — preferred. AG Grid v35 — legacy. |
 | **i18n** | i18next — module-local translations, default locale `sv` |
 | **Theming** | CSS variables + `.dark` class, `ThemeProvider` context |
 | **Icons** | Lucide React |
 | **State** | React Context + hooks + zustand for local stores |
 
-### AG Grid Usage
+### MyDataGrid Usage (Preferred)
 
-Always use the `DataGrid` wrapper at `src/core/shared/components/DataGrid.tsx`:
+Use `MyDataGrid` from `src/core/shared/grid/` for all new data tables. This is our own grid component powered by TanStack Table internally but exposing only our own public API. **Never import `@tanstack/react-table` directly in module code.**
+
+```tsx
+import { MyDataGrid } from '../../../core/shared/grid';
+import type { GridColumn } from '../../../core/shared/grid';
+
+const columns: GridColumn<MyType>[] = [
+  { id: 'name', field: 'name', headerName: 'Namn', width: 200 },
+  { id: 'status', field: 'status', headerName: 'Status', filterType: 'enum' },
+  { id: 'amount', field: 'amount', headerName: 'Belopp', filterType: 'number', aggregation: 'sum' },
+];
+
+<MyDataGrid<MyType>
+  rows={data}
+  columns={columns}
+  rowKey="id"
+  height={500}
+  features={{ filtering: true, sorting: true, grouping: true, selection: 'multi' }}
+/>
+```
+
+Key architecture rules:
+- **Public API only**: Modules import from `core/shared/grid` — never from `@tanstack/react-table`
+- **Own column schema**: Use `GridColumn<T>` (our type), not TanStack `ColumnDef`
+- **Adapter isolation**: TanStack types are confined to `core/shared/grid/adapter/`
+- **Swappable internals**: If TanStack is ever replaced, only the adapter layer changes
+
+Features: filtering (50+ operators), sorting, grouping with aggregation, selection, virtualization, column visibility, saved views, filter row, CSV export, inline editing.
+
+### AG Grid Usage (Legacy)
+
+The old `DataGrid` wrapper at `src/core/shared/components/DataGrid.tsx` is still available for existing pages:
 
 ```tsx
 import { DataGrid, type ColDef } from '../../../core/shared/components/DataGrid';
@@ -562,9 +593,7 @@ const columnDefs: ColDef<MyType>[] = [
 <DataGrid<MyType>
   rowData={data}
   columnDefs={columnDefs}
-  height="auto"         // or a fixed pixel value
-  rowHeight={40}         // optional
-  headerHeight={36}      // optional
+  height="auto"
 />
 ```
 
