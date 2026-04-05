@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '../../../core/shared/api/supabaseClient';
-import { useCompany } from '../../../core/company/context/CompanyContext';
-import { useAuth } from '../../../core/auth/context/AuthContext';
+import { supabase } from '../../shared/api/supabaseClient';
+import { useCompany } from '../../company/context/CompanyContext';
+import { useAuth } from '../../auth/context/AuthContext';
 
 /**
  * Invite a user to the active company.

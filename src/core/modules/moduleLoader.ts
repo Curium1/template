@@ -16,11 +16,16 @@ import { validateDependencies, sortByDependencyOrder } from './dependencyValidat
 export async function loadModules(): Promise<void> {
   console.info('[ModuleLoader] Discovering modules...');
 
-  // Vite glob import — eagerly imports all module configs
-  const moduleFiles = import.meta.glob<{ default: ModuleDefinition }>(
+  // Vite glob import — eagerly imports all module configs from modules/ and core/
+  const featureModules = import.meta.glob<{ default: ModuleDefinition }>(
     '/src/modules/*/module.config.tsx',
     { eager: true }
   );
+  const coreModules = import.meta.glob<{ default: ModuleDefinition }>(
+    '/src/core/*/module.config.tsx',
+    { eager: true }
+  );
+  const moduleFiles = { ...coreModules, ...featureModules };
 
   const modules: ModuleDefinition[] = [];
 

@@ -1,4 +1,4 @@
-import type { PermissionManifest } from '../../core/modules/types';
+import type { PermissionManifest } from '../modules/types';
 
 export const userAdminPermissions: PermissionManifest = {
   moduleKey: 'user_admin',

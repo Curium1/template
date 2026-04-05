@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '../../../core/shared/api/supabaseClient';
-import { useCompany } from '../../../core/company/context/CompanyContext';
-import type { CompanyRole } from '../../../core/company/types';
+import { supabase } from '../../shared/api/supabaseClient';
+import { useCompany } from '../../company/context/CompanyContext';
+import type { CompanyRole } from '../../company/types';
 
 /**
  * Fetch all roles for the active company.

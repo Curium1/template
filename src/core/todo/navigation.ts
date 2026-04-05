@@ -1,4 +1,4 @@
-import type { NavigationItem } from '../../core/modules/types';
+import type { NavigationItem } from '../modules/types';
 
 export const todoNavigation: NavigationItem[] = [
   {

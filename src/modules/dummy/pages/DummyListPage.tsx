@@ -1,4 +1,4 @@
-import { useState, useEffect, type FormEvent } from 'react';
+import { useState, useEffect, useMemo, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus, Pencil, Trash2, X, Loader2 } from 'lucide-react';
 import { ProtectedAction } from '../../../core/authorization/components/ProtectedRoute';
@@ -6,6 +6,8 @@ import { usePageHeader } from '../../../core/layout/usePageHeader';
 import { useDummyItems, useCreateDummy, useUpdateDummy, useDeleteDummy } from '../hooks/useDummyItems';
 import { useDummyStore } from '../store/useDummyStore';
 import { useNotifications } from '../../../core/notifications';
+import { MyDataGrid } from '../../../core/shared/grid';
+import type { GridColumn } from '../../../core/shared/grid';
 import type { DummyItem } from '../types';
 
 /* ─── Form Modal ─── */
@@ -241,6 +243,47 @@ export function DummyListPage() {
 
   const editingItem = editingId ? items?.find(i => i.id === editingId) : undefined;
 
+  // ─── Column definitions (Tier 1: Display) ───
+  const columns: GridColumn<DummyItem>[] = useMemo(() => [
+    {
+      id: 'title',
+      field: 'title',
+      headerName: t('modules.dummy.title', 'Titel'),
+      width: 250,
+      filterType: 'text',
+    },
+    {
+      id: 'description',
+      field: 'description',
+      headerName: t('modules.dummy.description', 'Beskrivning'),
+      flex: 2,
+      filterType: 'text',
+      valueFormatter: (v) => (v as string) || '—',
+    },
+    {
+      id: 'status',
+      field: 'status',
+      headerName: t('modules.dummy.status', 'Status'),
+      width: 120,
+      filterType: 'enum',
+      filterEnumValues: ['active', 'inactive'],
+      cellRenderer: ({ value }) => {
+        const s = value as string;
+        return (
+          <span
+            className={`inline-flex px-2 py-0.5 rounded-md text-[12px] font-medium ${
+              s === 'active'
+                ? 'bg-success/10 text-success'
+                : 'bg-muted text-muted-foreground'
+            }`}
+          >
+            {s === 'active' ? 'Aktiv' : 'Inaktiv'}
+          </span>
+        );
+      },
+    },
+  ], [t]);
+
   if (error) {
     return (
       <div className="text-destructive text-[14px]">
@@ -252,84 +295,42 @@ export function DummyListPage() {
   return (
     <>
       <div className="space-y-6">
-
-        {/* Table */}
-        {isLoading ? (
-          <div className="flex justify-center py-20">
-            <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
-          </div>
-        ) : !items?.length ? (
-          <div className="text-center py-20">
-            <p className="text-[14px] text-muted-foreground">Inga poster ännu.</p>
-          </div>
-        ) : (
-          <div className="bg-card border border-border/60 rounded-2xl overflow-hidden">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-border/60">
-                  <th className="text-left px-5 py-3 text-[12px] font-medium text-muted-foreground uppercase tracking-wide">
-                    {t('modules.dummy.title')}
-                  </th>
-                  <th className="text-left px-5 py-3 text-[12px] font-medium text-muted-foreground uppercase tracking-wide">
-                    {t('modules.dummy.description')}
-                  </th>
-                  <th className="text-left px-5 py-3 text-[12px] font-medium text-muted-foreground uppercase tracking-wide">
-                    {t('modules.dummy.status')}
-                  </th>
-                  <th className="w-24 px-5 py-3" />
-                </tr>
-              </thead>
-              <tbody>
-                {items.map(item => (
-                  <tr
-                    key={item.id}
-                    className="border-b border-border/40 last:border-0 hover:bg-foreground/[0.02]"
-                  >
-                    <td className="px-5 py-3.5 text-[14px] font-medium text-foreground">
-                      {item.title}
-                    </td>
-                    <td className="px-5 py-3.5 text-[14px] text-muted-foreground">
-                      {item.description || '—'}
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <span
-                        className={`inline-flex px-2 py-0.5 rounded-md text-[12px] font-medium ${
-                          item.status === 'active'
-                            ? 'bg-success/10 text-success'
-                            : 'bg-muted text-muted-foreground'
-                        }`}
-                      >
-                        {item.status === 'active' ? 'Aktiv' : 'Inaktiv'}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <div className="flex items-center justify-end gap-0.5">
-                        <ProtectedAction permission="dummy.edit">
-                          <button
-                            onClick={() => openEdit(item.id)}
-                            className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-foreground/[0.05]"
-                            title={t('modules.dummy.edit')}
-                          >
-                            <Pencil className="w-3.5 h-3.5" />
-                          </button>
-                        </ProtectedAction>
-                        <ProtectedAction permission="dummy.delete">
-                          <button
-                            onClick={() => setDeletingId(item.id)}
-                            className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/[0.06]"
-                            title={t('modules.dummy.delete')}
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </ProtectedAction>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+        <MyDataGrid<DummyItem>
+          rows={items ?? []}
+          columns={columns}
+          rowKey="id"
+          loading={isLoading}
+          height={400}
+          features={{
+            sorting: true,
+            toolbar: false,
+          }}
+          statusBar={false}
+          emptyMessage="Inga poster ännu."
+          rowActions={(row) => (
+            <>
+              <ProtectedAction permission="dummy.edit">
+                <button
+                  onClick={() => openEdit(row.id)}
+                  className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-foreground/[0.05]"
+                  title={t('modules.dummy.edit')}
+                >
+                  <Pencil className="w-3.5 h-3.5" />
+                </button>
+              </ProtectedAction>
+              <ProtectedAction permission="dummy.delete">
+                <button
+                  onClick={() => setDeletingId(row.id)}
+                  className="p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/[0.06]"
+                  title={t('modules.dummy.delete')}
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </ProtectedAction>
+            </>
+          )}
+          rowActionsWidth={70}
+        />
       </div>
 
       {/* Modals */}

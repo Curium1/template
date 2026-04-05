@@ -57,11 +57,11 @@ import {
   Shield,
 } from 'lucide-react';
 
-import { useAuth } from '../../../core/auth/context/AuthContext';
-import { ProtectedAction } from '../../../core/authorization/components/ProtectedRoute';
+import { useAuth } from '../../auth/context/AuthContext';
+import { ProtectedAction } from '../../authorization/components/ProtectedRoute';
 import { useCompanyMembers, useUpdateMemberRole, useRemoveMember } from '../hooks/useCompanyMembers';
 import { useCompanyRoles } from '../hooks/useCompanyRoles';
-import type { CompanyRole } from '../../../core/company/types';
+import type { CompanyRole } from '../../company/types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type MemberRow = any;

@@ -1,4 +1,4 @@
-import type { PermissionManifest } from '../../core/modules/types';
+import type { PermissionManifest } from '../modules/types';
 
 export const todoPermissions: PermissionManifest = {
   moduleKey: 'todo',

@@ -1,5 +1,5 @@
-import type { ModuleDefinition } from '../../core/modules/types';
-import { registerModuleTranslations } from '../../core/shared/i18n/i18n';
+import type { ModuleDefinition } from '../modules/types';
+import { registerModuleTranslations } from '../shared/i18n/i18n';
 import { userAdminPermissions } from './permissions';
 import { userAdminNavigation } from './navigation';
 import { UserListPage } from './pages/UserListPage';

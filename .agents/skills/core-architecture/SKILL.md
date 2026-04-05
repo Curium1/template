@@ -3,6 +3,8 @@ name: core-architecture
 description: Core architectural rules and conventions for the modular web application platform. ALWAYS consult this skill before writing any code in this project. It defines the module contract, RBAC model, multi-tenancy, folder conventions, notification/todo system, and coding standards.
 ---
 
+> **⚠️ SELF-UPDATE RULE**: Whenever you modify files inside `src/core/` (adding, removing, or changing shared infrastructure, grid features, layout, auth, authorization, modules, notifications, or any other core subsystem), you **MUST** update this skill to reflect those changes before finishing your task. This includes folder structure, tech stack, feature lists, code examples, and anti-patterns. Related skills (e.g. `datagrid-usage`) must also be kept in sync.
+
 # Core Architecture — Modular Platform Rules
 
 **This skill is the single source of truth for how this project is structured.** Read it before making any code changes.
@@ -11,8 +13,8 @@ description: Core architectural rules and conventions for the modular web applic
 
 This is a **modular monolith**: a single Vite + React 19 + TypeScript application with a strict separation between:
 
-1. **Core platform** (`src/core/`) — Owns auth, authorization, routing, layout, company context, notifications, shared infrastructure. Never contains business logic.
-2. **Feature modules** (`src/modules/<module>/`) — Self-contained features that plug into the core via a formal contract. Each module declares its own permissions, routes, navigation, DB schema, and dashboard widgets.
+1. **Core platform** (`src/core/`) — Owns auth, authorization, routing, layout, company context, notifications, shared infrastructure. Also contains **core modules** (todo, user-admin) that are platform-level functionality.
+2. **Feature modules** (`src/modules/<module>/`) — Self-contained business features that plug into the core via a formal contract. Each module declares its own permissions, routes, navigation, DB schema, and dashboard widgets.
 
 ```
 src/
@@ -23,14 +25,17 @@ src/
 │   ├── modules/                   # Module system (loader, registry, contract)
 │   ├── layout/                    # AppShell, Sidebar, Header
 │   ├── notifications/             # Notification/Todo system (context, panel, types)
-│   ├── shared/                    # UI primitives, API client, DataGrid, i18n
+│   ├── shared/                    # UI primitives, API client, grid, i18n
 │   │   ├── api/                   # supabaseClient.ts
-│   │   ├── components/            # DataGrid.tsx and other shared components
+│   │   ├── components/            # Shared UI components
+│   │   ├── grid/                  # MyDataGrid component (TanStack Table internally)
 │   │   ├── hooks/                 # Shared React hooks
 │   │   ├── i18n/                  # i18next config, locale: sv
 │   │   └── store/                 # Shared zustand stores
 │   ├── router/                    # Root router assembly
-│   └── landing/                   # DashboardPage (aggregates module widgets)
+│   ├── landing/                   # DashboardPage (aggregates module widgets)
+│   ├── todo/                      # Core module: Task/notification management
+│   └── user-admin/                # Core module: User & role management
 ├── modules/                       # FEATURES — each a self-contained module
 │   └── <module_key>/
 │       ├── components/            # Module-specific UI components
@@ -52,7 +57,11 @@ src/
 Every module MUST export a default `ModuleDefinition` from `module.config.tsx`:
 
 ```tsx
+// Feature module (src/modules/<key>/module.config.tsx):
 import type { ModuleDefinition } from '../../core/modules/types';
+
+// Core module (src/core/<key>/module.config.tsx):
+import type { ModuleDefinition } from '../modules/types';
 
 const moduleDefinition: ModuleDefinition = {
   key: 'my_module',                    // Unique identifier, snake_case
@@ -68,6 +77,12 @@ const moduleDefinition: ModuleDefinition = {
 
 export default moduleDefinition;
 ```
+
+> **Module discovery**: The module loader (`src/core/modules/moduleLoader.ts`) uses two Vite glob imports to discover modules:
+> - `/src/core/*/module.config.tsx` — Core modules (platform-level: todo, user-admin)
+> - `/src/modules/*/module.config.tsx` — Feature modules (business domain)
+>
+> Both are merged at startup. Core modules take precedence in case of key collisions.
 
 ### Permission Manifest
 
@@ -541,7 +556,7 @@ The app supports **light**, **dark**, and **system** themes via `ThemeProvider` 
 | **Database** | Supabase Postgres with RLS |
 | **Routing** | React Router v7 |
 | **Data fetching** | TanStack React Query (`@tanstack/react-query`) |
-| **Data tables** | MyDataGrid (TanStack Table v8 internally) — preferred. AG Grid v35 — legacy. |
+| **Data tables** | MyDataGrid (TanStack Table v8 internally) — sole grid component |
 | **i18n** | i18next — module-local translations, default locale `sv` |
 | **Theming** | CSS variables + `.dark` class, `ThemeProvider` context |
 | **Icons** | Lucide React |
@@ -549,7 +564,7 @@ The app supports **light**, **dark**, and **system** themes via `ThemeProvider` 
 
 ### MyDataGrid Usage (Preferred)
 
-Use `MyDataGrid` from `src/core/shared/grid/` for all new data tables. This is our own grid component powered by TanStack Table internally but exposing only our own public API. **Never import `@tanstack/react-table` directly in module code.**
+Use `MyDataGrid` from `src/core/shared/grid/` for all data tables. This is our own grid component powered by TanStack Table internally but exposing only our own public API. **Never import `@tanstack/react-table` directly in module code.**
 
 ```tsx
 import { MyDataGrid } from '../../../core/shared/grid';
@@ -576,28 +591,9 @@ Key architecture rules:
 - **Adapter isolation**: TanStack types are confined to `core/shared/grid/adapter/`
 - **Swappable internals**: If TanStack is ever replaced, only the adapter layer changes
 
-Features: filtering (50+ operators), sorting, grouping with aggregation, selection, virtualization, column visibility, saved views, filter row, CSV export, inline editing.
+Features: filtering (50+ operators), sorting, grouping with aggregation, selection (single/multi), virtualization, column pinning, column visibility, saved views, CSV export, inline editing, pagination, row actions (slot pattern), toolbar toggles.
 
-### AG Grid Usage (Legacy)
-
-The old `DataGrid` wrapper at `src/core/shared/components/DataGrid.tsx` is still available for existing pages:
-
-```tsx
-import { DataGrid, type ColDef } from '../../../core/shared/components/DataGrid';
-
-const columnDefs: ColDef<MyType>[] = [
-  { headerName: 'Name', field: 'name', flex: 2 },
-  { headerName: 'Status', field: 'status', flex: 1 },
-];
-
-<DataGrid<MyType>
-  rowData={data}
-  columnDefs={columnDefs}
-  height="auto"
-/>
-```
-
-The `DataGrid` wrapper applies a `nordicTheme` that maps Tailwind design tokens to AG Grid CSS variables for consistent styling.
+> **For full API reference, feature tiers, and code patterns**, consult the **`datagrid-usage`** skill.
 
 ### Coding Standards
 
@@ -739,7 +735,8 @@ create policy "company_isolation" on <table>
 - ❌ Skip i18n for user-facing strings
 - ❌ Create Supabase tables without RLS
 - ❌ Use `current_setting('app.current_company_id')` — use `get_my_company_ids()` instead
-- ❌ Import AG Grid directly — always use the `DataGrid` wrapper component
+- ❌ Import `@tanstack/react-table` directly — always use `MyDataGrid` from `core/shared/grid`
+- ❌ Build custom `<table>` for data display — use `MyDataGrid` with minimal features
 - ❌ Hardcode roles or permissions in a static map — they come from `company_roles` at runtime
 - ❌ Create a module with DB persistence but no `schema.sql` file
 - ❌ Push notifications without setting `moduleKey`, `path`, and `priority`

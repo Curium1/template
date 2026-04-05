@@ -18,10 +18,10 @@ import {
   Plus,
 } from 'lucide-react';
 import * as LucideIcons from 'lucide-react';
-import { useNotifications } from '../../../core/notifications';
-import { useCompany } from '../../../core/company/context/CompanyContext';
-import { usePageHeader } from '../../../core/layout/usePageHeader';
-import type { AppNotification, TodoStatus } from '../../../core/notifications/types';
+import { useNotifications } from '../../notifications';
+import { useCompany } from '../../company/context/CompanyContext';
+import { usePageHeader } from '../../layout/usePageHeader';
+import type { AppNotification, TodoStatus } from '../../notifications/types';
 import { TaskCreateModal } from '../components/TaskCreateModal';
 
 const DEFAULT_BRAND_COLOR = '#E53E3E';

@@ -1,5 +1,5 @@
-import type { ModuleDefinition } from '../../core/modules/types';
-import { registerModuleTranslations } from '../../core/shared/i18n/i18n';
+import type { ModuleDefinition } from '../modules/types';
+import { registerModuleTranslations } from '../shared/i18n/i18n';
 import { todoPermissions } from './permissions';
 import { todoNavigation } from './navigation';
 import { TodoPage } from './pages/TodoPage';

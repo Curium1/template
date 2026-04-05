@@ -1,4 +1,4 @@
-import type { CompanyMember, CompanyRole } from '../../../core/company/types';
+import type { CompanyMember, CompanyRole } from '../../company/types';
 
 /** Enriched member with joined profile and role data */
 export interface MemberWithProfile extends CompanyMember {

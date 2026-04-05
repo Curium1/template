@@ -1,13 +1,13 @@
 import { useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { X, Loader2, UserPlus } from 'lucide-react';
-import { ProtectedAction } from '../../../core/authorization/components/ProtectedRoute';
-import { usePageHeader } from '../../../core/layout/usePageHeader';
+import { ProtectedAction } from '../../authorization/components/ProtectedRoute';
+import { usePageHeader } from '../../layout/usePageHeader';
 import { useCompanyRoles } from '../hooks/useCompanyRoles';
 import { useInviteUser } from '../hooks/useInviteUser';
 import { useUserAdminStore } from '../store/useUserAdminStore';
 import { MembersTanStackTable } from '../components/MembersTanStackTable';
-import type { CompanyRole } from '../../../core/company/types';
+import type { CompanyRole } from '../../company/types';
 
 /* ─── Invite Modal ─── */
 

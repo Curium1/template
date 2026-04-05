@@ -1,11 +1,11 @@
 import { useState, useMemo, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus, Pencil, Trash2, X, Loader2, Check, Shield, ChevronRight, ArrowLeft, Save } from 'lucide-react';
-import { ProtectedAction } from '../../../core/authorization/components/ProtectedRoute';
-import { usePageHeader } from '../../../core/layout/usePageHeader';
+import { ProtectedAction } from '../../authorization/components/ProtectedRoute';
+import { usePageHeader } from '../../layout/usePageHeader';
 import { useCompanyRoles, useCreateRole, useUpdateRole, useDeleteRole } from '../hooks/useCompanyRoles';
-import { moduleRegistry } from '../../../core/modules/moduleRegistry';
-import type { CompanyRole } from '../../../core/company/types';
+import { moduleRegistry } from '../../modules/moduleRegistry';
+import type { CompanyRole } from '../../company/types';
 
 /* ─── Permission Matrix (inline, not modal) ─── */
 

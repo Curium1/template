@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Users, Shield } from 'lucide-react';
 import { useCompanyMembers } from '../hooks/useCompanyMembers';
 import { useCompanyRoles } from '../hooks/useCompanyRoles';
-import type { DashboardWidget } from '../../../core/modules/types';
+import type { DashboardWidget } from '../../modules/types';
 
 /* ─── Team Overview Widget ─── */
 

@@ -8,7 +8,7 @@ import {
   Briefcase,
   Hash,
 } from 'lucide-react';
-import { useNotifications } from '../../../core/notifications';
+import { useNotifications } from '../../notifications';
 import type {
   NotificationPriority,
   RecurrenceFrequency,
@@ -16,7 +16,7 @@ import type {
   Weekday,
   WeekdayPosition,
   MonthlyMode,
-} from '../../../core/notifications/types';
+} from '../../notifications/types';
 
 /* ── Constants ── */
 
